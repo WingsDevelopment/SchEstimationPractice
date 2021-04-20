@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock
 {
-    public class RakicRaiffeisenBrosBankService : IRakicRaiffeisenBrosBankService
+    public class RakicRaiffeisenBrosBankService : IBankService
     {
         public async Task<bool> CheckStatus(string JMBG, int PIN)
         {

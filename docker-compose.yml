@@ -1,0 +1,22 @@
+version: '2.4'
+
+services:
+    mssql:
+        image: mcr.microsoft.com/mssql/server:latest
+        container_name: estimation_practice_mssql
+        hostname: estimation_practice_mssql
+        ports:
+            - "1433:1433"
+        environment: 
+            SA_PASSWORD: Beograd011!
+            ACCEPT_EULA: "Y"
+        volumes: 
+            - "mssqldata:/var/lib/mssql"
+        networks:
+            - estimation_practice_network
+
+volumes:
+    mssqldata:       
+
+networks: 
+    estimation_practice_network:

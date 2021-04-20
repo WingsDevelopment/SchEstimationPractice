@@ -1,6 +1,7 @@
 ﻿using Core.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Core.Domain.Entities
@@ -64,10 +65,14 @@ namespace Core.Domain.Entities
                 throw new WalletEntityException("JMBG nije validan!", "SetJMBG: JMBG is invalid.");
             }
             //todo: proveriti el ovako radi
-            int day = int.Parse(jmbg.Substring(0, 2));
-            int month = int.Parse(jmbg.Substring(2, 4));
-            int year = int.Parse(jmbg.Substring(4, 7));
-            var birthDate = new DateTime(year, month, day);
+
+            string dateStr = jmbg.Substring(0, 7);
+            DateTime birthDate;
+            if (DateTime.TryParseExact(dateStr
+                                        , "ddMMyyy"
+                                        , CultureInfo.InvariantCulture
+                                        , DateTimeStyles.None
+                                        , out birthDate))
 
             if (birthDate >= DateTime.Now.AddYears(-18))
             {

@@ -17,6 +17,7 @@ namespace Core.Domain.Entities
         public Transaction()
         {
             Id = Guid.NewGuid().ToString();
+            TransactionDate = DateTime.Now;
         }
 
         public Transaction(string walletId,

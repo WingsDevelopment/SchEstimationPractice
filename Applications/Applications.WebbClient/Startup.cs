@@ -4,14 +4,14 @@ using Core.Domain.Repositories;
 using Core.Domain.Services.External;
 using Core.Domain.Services.Internal;
 using Core.Domain.Services.Internal.Interfaces;
-using Core.Infrastructure.DataAccess.EfCoreDataAccess;
-using Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Core.Infrastructure.DataAccess.EfCoreDataAccess;
+using Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock;
 
 namespace Applications.WebbClient
 {

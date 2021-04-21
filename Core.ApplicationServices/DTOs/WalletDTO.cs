@@ -10,6 +10,7 @@ namespace Core.ApplicationServices.DTOs
         public string Id{ get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public decimal Balance { get; set; }
         public string JMBG { get; set; }
         public string Bank { get; set; }
         public string PIN { get; set; }
@@ -26,6 +27,7 @@ namespace Core.ApplicationServices.DTOs
             Id = wallet.Id;
             FirstName = wallet.FirstName;
             LastName = wallet.LastName;
+            Balance = wallet.Balance;
             JMBG = wallet.JMBG;
             Bank = wallet.Bank;
             BankAccount = wallet.BankAccount;

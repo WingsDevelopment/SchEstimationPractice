@@ -11,6 +11,7 @@ namespace Core.Domain.Entities
         public string Id { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
+        public decimal Balance { get; private set; }
         public string JMBG { get; private set; }
         public string Bank { get; private set; }
         public string PIN { get; private set; }
@@ -28,8 +29,10 @@ namespace Core.Domain.Entities
             string bank,
             string pin,
             string bankAccount,
-            string pass) : this()
+            string pass,
+            decimal balance = 0) : this()
         {
+            Balance = balance;
             SetFirstName(firstName);
             SetLastName(lastName);
             SetJMBG(jmbg);
@@ -37,6 +40,31 @@ namespace Core.Domain.Entities
             SetPin(pin);
             SetBankAccount(bankAccount);
             SetPASS(pass);
+        }
+
+        public void Withdraw(decimal amount)
+        {
+            if (amount < 0)
+            {
+                throw new WalletEntityException("Amount mora biti pozitivan!", "Withdraw: Amount must be positive number.");
+            }
+
+            if (Balance - amount < 0) 
+            {
+                throw new WalletEntityException("Nemate dovoljno kredita", "Withdraw: Not enough credit."); 
+            }
+
+
+            Balance -= amount;
+        }
+        public void Deposit(decimal amount)
+        {
+            if (amount < 0)
+            {
+                throw new WalletEntityException("Amount mora biti pozitivan!", "Withdraw: Amount must be positive number.");
+            }
+
+            Balance += amount;
         }
 
         public void SetFirstName(string firstName)

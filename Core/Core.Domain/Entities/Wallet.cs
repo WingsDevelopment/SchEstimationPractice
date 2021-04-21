@@ -17,6 +17,7 @@ namespace Core.Domain.Entities
         public string PIN { get; private set; }
         public string BankAccount { get; private set; }
         public string PASS { get; private set; }
+        public bool IsBlocked { get; private set; }
 
         public Wallet()
         {
@@ -149,6 +150,19 @@ namespace Core.Domain.Entities
             }
 
             PASS = pass;
+        }
+
+        public void Block()
+        {
+            if (IsBlocked) throw new WalletEntityException("Wallet je vec blokiran!", "Block: Already blocked.");
+
+            IsBlocked = true;
+        }
+        public void UnBlock()
+        {
+            if (!IsBlocked) throw new WalletEntityException("Wallet je vec unblokiran!", "UnBlock: Already unblocked.");
+
+            IsBlocked = false;
         }
     }
 }

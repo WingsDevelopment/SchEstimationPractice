@@ -1,0 +1,37 @@
+﻿<section class="page-section" id="deposit">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Add money from bank</h2>
+            <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
+        </div>
+        <form method="post">
+            <div class="row align-items-stretch mb-5">
+                <button class="btn-sm btn-info" type="button" onclick="FillJmbgAndPassFromLocalStorage()">Apply saved jmbg & pass</button>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control"
+                               id="JMBG" name="JMBG" placeholder="Your JMBG *" required="required"
+                               data-validation-required-message="Please enter your JMBG." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control"
+                               id="PASS" name="Pass" placeholder="Your Pass *" required="required"
+                               data-validation-required-message="Please enter your Pass." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control"
+                               id="NewPass" name="NewPass" placeholder="Your New Pass (length must be 6)*" required="required"
+                               data-validation-required-message="Please enter your new Pass." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <div id="success"></div>
+                <button class="btn btn-primary btn-xl text-uppercase" type="submit" asp-action="UpdatePass">Update pass</button>
+            </div>
+        </form>
+    </div>
+</section>

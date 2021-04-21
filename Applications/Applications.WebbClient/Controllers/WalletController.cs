@@ -209,5 +209,31 @@ namespace Applications.WebbClient.Controllers
                 return View();
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UpdatePass()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdatePass(string pass, string jmbg, string newPass)
+        {
+            try
+            {
+                var wallet = await WalletService.UpdatePass(pass, jmbg, newPass);
+
+                TempData["Success"] = "Your pass is updated successfully!";
+                return RedirectToAction("WalletInfo", new { jmbg = wallet.JMBG, pass = wallet.PASS });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                if (ex is EstimationPracticeException e) TempData["Error"] = e.EstimationPracticeExceptionMessage;
+                else TempData["Error"] = BasicErrorMessage;
+
+                return View();
+            }
+        }
+        
     }
 }

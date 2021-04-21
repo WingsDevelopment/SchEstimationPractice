@@ -1,84 +1,92 @@
 ﻿@model Core.ApplicationServices.DTOs.WalletDTO
 
-    <section class="page-section" id="createWallet">
-        <div>
-            <h2 class="section-heading text-uppercase">Wallet details</h2>
-            <a asp-controller="Transaction" asp-action="Transactions" asp-route-walletId="@Model.Id">VIEW TRANSACTIONS</a>
-            <dl class="row">
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.FirstName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.FirstName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.LastName)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.LastName)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Balance)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Balance)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.JMBG)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.JMBG)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Bank)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.Bank)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.PIN)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.PIN)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.BankAccount)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.BankAccount)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.IsBlocked)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.IsBlocked)
-                </dd>
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.PASS)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.PASS)
-                </dd>
-            </dl>
-            <button class="btn btn-primary" onclick="SavePassAndJMBGToLocalStorage('@Model.PASS', '@Model.JMBG')">Save Pass & JMBG</button>
-            <p id="pass-jmbg-saved" style="display: none">Saved successfully!</p>
+<section class="page-section" id="createWallet">
+    <div>
+        <h2 class="section-heading text-uppercase">Wallet details</h2>
+        <a asp-controller="Transaction" asp-action="Transactions" asp-route-walletId="@Model.Id">VIEW TRANSACTIONS</a>
+        <br />
+        <a asp-controller="Wallet" asp-action="UpdatePass">UPDATE PASS</a>
+        <br />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.FirstName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.LastName)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Balance)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Balance)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.JMBG)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.JMBG)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Bank)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Bank)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PIN)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PIN)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.BankAccount)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.BankAccount)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.IsBlocked)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.IsBlocked)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.PASS)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.PASS)
+            </dd>
+        </dl>
+        <button class="btn btn-primary" onclick="SavePassAndJMBGToLocalStorage('@Model.PASS', '@Model.JMBG')">Save Pass & JMBG to your browser</button>
+        <button class="btn btn-primary" onclick="ClearLocalStorage()">Delete Saved Pass & JMBG</button>
+        <p id="pass-jmbg-saved" style="display: none">Saved successfully!</p>
+    </div>
 
-        </div>
 
+    <br />
+    <br />
+    <br />
+    <br />
+    <div style="margin-top: 20px">
+        <a asp-controller="Home" asp-action="Index">Back to Home</a>
+    </div>
+</section>
+<script>
+    function SavePassAndJMBGToLocalStorage(pass, jmbg) {
+        localStorage.clear();
+        localStorage.setItem('pass', pass);
+        localStorage.setItem('jmbg', jmbg);
+        document.getElementById("pass-jmbg-saved").style.display = "block"
+    }
 
-        <br />
-        <br />
-        <br />
-        <br />
-        <div style="margin-top: 20px">
-            <a asp-controller="Home" asp-action="Index">Back to Home</a>
-        </div>
-    </section>
-        <script>
-            function SavePassAndJMBGToLocalStorage(pass, jmbg) {
-                localStorage.clear();
-                localStorage.setItem('pass', pass);
-                localStorage.setItem('jmbg', jmbg);
-                document.getElementById("pass-jmbg-saved").style.display = "block"
-            }
-        </script>
+    function ClearLocalStorage() {
+        localStorage.clear();
+        document.getElementById("pass-jmbg-saved").style.display = "block"
+    }
+</script>

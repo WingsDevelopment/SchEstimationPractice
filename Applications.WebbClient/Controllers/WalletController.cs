@@ -33,7 +33,7 @@ namespace Applications.WebbClient.Controllers
             {
                 var wallet = await WalletService.CreateWallet(walletDTO);
 
-                return RedirectToAction("WalletInfo", new { walletId = wallet.Id });
+                return RedirectToAction("WalletInfo", new { jmbg = wallet.JMBG, pass = wallet.PASS });
             }
             catch (Exception ex)
             {
@@ -46,11 +46,77 @@ namespace Applications.WebbClient.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> WalletInfo(string walletId)
+        public async Task<IActionResult> WalletInfo(string jmbg, string pass)
         {
-            var wallet = await WalletService.GetWallet(walletId);
 
-            return View(wallet);
+            try
+            {
+                var wallet = await WalletService.GetWallet(jmbg, pass);
+
+                return View(wallet);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                if (ex is EstimationPracticeException e) TempData["Error"] = e.EstimationPracticeExceptionMessage;
+                else TempData["Error"] = BasicErrorMessage;
+
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Deposit()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Deposit(string jmbg, string pass, decimal amount)
+        {
+
+            try
+            {
+                var wallet = await WalletService.Deposit(jmbg, pass, amount);
+
+                TempData["Success"] = "Money is successfully added!";
+                return RedirectToAction("WalletInfo", new { jmbg = wallet.JMBG, pass = wallet.PASS });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                if (ex is EstimationPracticeException e) TempData["Error"] = e.EstimationPracticeExceptionMessage;
+                else TempData["Error"] = BasicErrorMessage;
+
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Withdraw()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Withdraw(string jmbg, string pass, decimal amount)
+        {
+
+            try
+            {
+                var wallet = await WalletService.Withdraw(jmbg, pass, amount);
+
+                TempData["Success"] = "Money is successfully withdrawed!";
+                return RedirectToAction("WalletInfo", new { jmbg = wallet.JMBG, pass = wallet.PASS });
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, ex.Message);
+                if (ex is EstimationPracticeException e) TempData["Error"] = e.EstimationPracticeExceptionMessage;
+                else TempData["Error"] = BasicErrorMessage;
+
+                return View();
+            }
         }
     }
 }

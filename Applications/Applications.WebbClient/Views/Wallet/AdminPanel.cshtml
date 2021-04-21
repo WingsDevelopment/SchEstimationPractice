@@ -1,0 +1,47 @@
+﻿<section class="page-section" id="transfer">
+    <div class="container">
+        <div class="text-center">
+            <h2 class="section-heading text-uppercase">Admin panel</h2>
+            <h3 class="section-subheading text-muted">From wallet, to your bank account. Lorem ipsum dolor sit amet consectetur.</h3>
+        </div>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control" id="JMBG" name="JMBG" placeholder="JMBG to block*" required="required" data-validation-required-message="Please enter JMBG to block." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control" id="PASS" name="Pass" placeholder="Your Pass *" required="required" data-validation-required-message="Please enter your Pass." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div id="success"></div>
+                <button class="btn btn-primary btn-xl text-uppercase" type="submit" asp-action="BlockWallet">Block wallet</button>
+            </div>
+        </form>
+        <br />
+        <br />
+        <br />
+        <form method="post">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control" id="JMBG" name="JMBG" placeholder="JMBG to unblock*" required="required" data-validation-required-message="Please enter JMBG to unblock." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                    <div class="form-group">
+                        <input autocomplete="off" class="form-control" id="PASS" name="Pass" placeholder="Your Pass *" required="required" data-validation-required-message="Please enter your Pass." />
+                        <p class="help-block text-danger"></p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div id="success"></div>
+                <button class="btn btn-primary btn-xl text-uppercase" type="submit" asp-action="UnBlockWallet">Unblock wallet</button>
+            </div>
+        </form>
+    </div>
+</section>

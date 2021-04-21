@@ -6,6 +6,6 @@ namespace Core.Domain.Services.Internal.Interfaces
 {
     public interface IPassService
     {
-        int GeneratePASS();
+        string GeneratePASS();
     }
 }

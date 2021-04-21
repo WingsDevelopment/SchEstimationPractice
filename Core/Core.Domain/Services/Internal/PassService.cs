@@ -18,9 +18,9 @@ namespace Core.Domain.Services.Internal
             if (!int.TryParse(maxPassConfig, out PASS_MAX)) throw new Exception("Invalid maxPassConfig string");
         }
 
-        public int GeneratePASS()
+        public string GeneratePASS()
         {
-            return random.Next(PASS_MIN, PASS_MAX);
+            return random.Next(PASS_MIN, PASS_MAX).ToString();
         }
     }
 }

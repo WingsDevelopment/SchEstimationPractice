@@ -9,9 +9,9 @@ namespace Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock
 {
     public class RakicRaiffeisenBrosBankService : IBankService
     {
-        public async Task<bool> CheckStatus(string JMBG, int PIN)
+        public async Task<bool> CheckStatus(string JMBG, string PIN)
         {
-            if (PIN == 0)
+            if (PIN == "0000")
             {
                 throw new EstimationPracticeException("PIN nije validan", "CheckStatus: Error!");
             }
@@ -19,9 +19,9 @@ namespace Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock
             return true;
         }
 
-        public async Task<decimal> Deposit(string JMBG, int PIN, decimal Amount)
+        public async Task<decimal> Deposit(string JMBG, string PIN, decimal Amount)
         {
-            if (PIN == 0)
+            if (PIN == "0000")
             {
                 throw new EstimationPracticeException("PIN nije validan", "CheckStatus: Error!");
             }
@@ -29,9 +29,9 @@ namespace Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock
             return Amount;
         }
 
-        public async Task<decimal> Withdraw(string JMBG, int PIN, decimal Amount)
+        public async Task<decimal> Withdraw(string JMBG, string PIN, decimal Amount)
         {
-            if (PIN == 0)
+            if (PIN == "0000")
             {
                 throw new EstimationPracticeException("PIN nije validan", "CheckStatus: Error!");
             }

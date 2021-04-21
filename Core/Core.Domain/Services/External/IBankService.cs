@@ -7,8 +7,8 @@ namespace Core.Domain.Services.External
 {
     public interface IBankService
     {
-        Task<bool> CheckStatus(string JMBG, int PIN);
-        Task<decimal> Deposit(string JMBG, int PIN, decimal Amount);
-        Task<decimal> Withdraw(string JMBG, int PIN, decimal Amount);
+        Task<bool> CheckStatus(string JMBG, string PIN);
+        Task<decimal> Deposit(string JMBG, string PIN, decimal Amount);
+        Task<decimal> Withdraw(string JMBG, string PIN, decimal Amount);
     }
 }

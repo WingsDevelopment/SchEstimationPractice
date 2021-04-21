@@ -8,7 +8,6 @@ namespace Core.Infrastructure.DataAccess.EfCoreDataAccess.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Transaction> modelBuilder)
         {
-            modelBuilder.Property(a => a.Id).ValueGeneratedOnAdd();
         }
     }
 }

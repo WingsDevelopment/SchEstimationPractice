@@ -8,22 +8,27 @@ namespace Core.Domain.Entities
 {
     public class Wallet
     {
-        public int Id { get; private set; }
+        public string Id { get; private set; }
         public string FirstName { get; private set; }
         public string LastName { get; private set; }
         public string JMBG { get; private set; }
         public string Bank { get; private set; }
-        public int PIN { get; private set; }
+        public string PIN { get; private set; }
         public string BankAccount { get; private set; }
-        public int PASS { get; private set; }
+        public string PASS { get; private set; }
 
-        //q: zbog ef-a ?
         public Wallet()
         {
-
+            Id = Guid.NewGuid().ToString();
         }
 
-        public Wallet(string firstName, string lastName, string jmbg, string bank, int pin, string bankAccount, int pass)
+        public Wallet(string firstName,
+            string lastName,
+            string jmbg,
+            string bank,
+            string pin,
+            string bankAccount,
+            string pass) : this()
         {
             SetFirstName(firstName);
             SetLastName(lastName);
@@ -90,9 +95,9 @@ namespace Core.Domain.Entities
 
             Bank = bank;
         }
-        public void SetPin(int pin)
+        public void SetPin(string pin)
         {
-            if (pin < 1000 || pin > 9999)
+            if (pin.Length != 4)
             {
                 throw new WalletEntityException("Pin je neispravnog formata!", "SetPin: Invalid pin format.");
             }
@@ -108,9 +113,9 @@ namespace Core.Domain.Entities
 
             BankAccount = bankAccount;
         }
-        public void SetPASS(int pass)
+        public void SetPASS(string pass)
         {
-            if (pass < 100000 || pass > 999999)
+            if (pass.Length != 6)
             {
                 throw new WalletEntityException("PASS je neispravnog formata!", "SetPASS: Invalid PASS format.");
             }

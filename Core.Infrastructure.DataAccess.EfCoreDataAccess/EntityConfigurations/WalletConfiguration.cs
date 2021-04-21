@@ -11,7 +11,6 @@ namespace Core.Infrastructure.DataAccess.EfCoreDataAccess.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Wallet> modelBuilder)
         {
-            modelBuilder.Property(a => a.Id).ValueGeneratedOnAdd();
         }
     }
 }

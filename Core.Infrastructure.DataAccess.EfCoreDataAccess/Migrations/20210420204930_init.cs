@@ -22,15 +22,14 @@ namespace Core.Infrastructure.DataAccess.EfCoreDataAccess.Migrations
                 name: "Wallets",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JMBG = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bank = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PIN = table.Column<int>(type: "int", nullable: false),
+                    PIN = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BankAccount = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PASS = table.Column<int>(type: "int", nullable: false)
+                    PASS = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

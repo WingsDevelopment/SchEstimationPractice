@@ -32,10 +32,8 @@ namespace Core.Infrastructure.DataAccess.EfCoreDataAccess.Migrations
 
             modelBuilder.Entity("Core.Domain.Entities.Wallet", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Bank")
                         .HasColumnType("nvarchar(max)");
@@ -52,11 +50,11 @@ namespace Core.Infrastructure.DataAccess.EfCoreDataAccess.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PASS")
-                        .HasColumnType("int");
+                    b.Property<string>("PASS")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PIN")
-                        .HasColumnType("int");
+                    b.Property<string>("PIN")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

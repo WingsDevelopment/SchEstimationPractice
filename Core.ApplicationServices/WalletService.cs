@@ -1,14 +1,10 @@
-﻿using Common.EfCoreDataAccess;
-using Core.ApplicationServices.DTOs;
+﻿using Core.ApplicationServices.DTOs;
 using Core.ApplicationServices.Exceptions;
 using Core.Domain.Entities;
 using Core.Domain.Repositories;
 using Core.Domain.Services.External;
-using Core.Domain.Services.Internal;
 using Core.Domain.Services.Internal.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Core.ApplicationServices
@@ -70,7 +66,7 @@ namespace Core.ApplicationServices
             string pass,
             decimal amount)
         {
-            try 
+            try
             {
                 await UnitOfWork.BeginTransactionAsync();
 
@@ -141,9 +137,9 @@ namespace Core.ApplicationServices
         /// <param name="pass"></param>
         /// <param name="amount"></param>
         /// <returns>WalletDTO wallet from transfer occured</returns>
-        public async Task<WalletDTO> Transfer(string jmbg, 
-            string relatedJmbg, 
-            string pass, 
+        public async Task<WalletDTO> Transfer(string jmbg,
+            string relatedJmbg,
+            string pass,
             decimal amount)
         {
             try
@@ -162,8 +158,8 @@ namespace Core.ApplicationServices
                 Transaction transferOut = new Transaction(walletFrom.Id, amount, TransactionType.TransferOut);
                 Transaction transferIn = new Transaction(walletTo.Id, amount, TransactionType.TransferIn);
                 //set references
-                transferOut.SetRelatedWalletReference(transferIn.Id, walletTo.JMBG);
-                transferIn.SetRelatedWalletReference(transferOut.Id, walletFrom.JMBG);
+                transferOut.SetTransferReference(transferIn.Id, walletTo.JMBG);
+                transferIn.SetTransferReference(transferOut.Id, walletFrom.JMBG);
                 //update wallets
                 walletFrom.Withdraw(amount);
                 walletTo.Deposit(amount);
@@ -183,6 +179,19 @@ namespace Core.ApplicationServices
 
                 throw e;
             }
+        }
+
+        public async Task<WalletDTO> UpdatePass(string pass, string jmbg, string newPass)
+        {
+            var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
+            ValidateWallet(wallet, jmbg, pass);
+
+            wallet.SetPASS(newPass);
+
+            await UnitOfWork.WalletRepository.Update(wallet);
+            await UnitOfWork.SaveChangesAsync();
+
+            return new WalletDTO(wallet);
         }
 
         public async Task<WalletDTO> BlockWallet(string jmbg)

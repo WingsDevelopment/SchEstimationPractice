@@ -60,7 +60,7 @@ namespace Core.Domain.Entities
             RelatedWalletJmbg = relatedWalletJmbg;
         }
 
-        public void SetRelatedWalletReference(string referenceTransactionId, string relatedWalletJmbg)
+        public void SetTransferReference(string referenceTransactionId, string relatedWalletJmbg)
         {
             SetReferenceTransactionId(referenceTransactionId);
             SetRelatedJmbg(relatedWalletJmbg);

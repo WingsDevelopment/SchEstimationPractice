@@ -7,14 +7,14 @@ namespace Core.ApplicationServices.DTOs
 {
     public class WalletDTO
     {
-        public int Id{ get; set; }
+        public string Id{ get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string JMBG { get; set; }
         public string Bank { get; set; }
-        public int PIN { get; set; }
+        public string PIN { get; set; }
         public string BankAccount { get; set; }
-        public int PASS { get; set; }
+        public string PASS { get; set; }
 
         public WalletDTO()
         {
@@ -29,6 +29,8 @@ namespace Core.ApplicationServices.DTOs
             JMBG = wallet.JMBG;
             Bank = wallet.Bank;
             BankAccount = wallet.BankAccount;
+            PIN = wallet.PIN;
+            PASS = wallet.PASS;
         }
     }
 }

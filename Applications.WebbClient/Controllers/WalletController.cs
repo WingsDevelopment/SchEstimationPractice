@@ -33,7 +33,7 @@ namespace Applications.WebbClient.Controllers
             {
                 var wallet = await WalletService.CreateWallet(walletDTO);
 
-                return View(wallet);
+                return RedirectToAction("WalletInfo", new { walletId = wallet.Id });
             }
             catch (Exception ex)
             {
@@ -43,6 +43,14 @@ namespace Applications.WebbClient.Controllers
 
                 return View();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> WalletInfo(string walletId)
+        {
+            var wallet = await WalletService.GetWallet(walletId);
+
+            return View(wallet);
         }
     }
 }

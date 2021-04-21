@@ -46,7 +46,7 @@ namespace Core.ApplicationServices
             bool isValid = await BankService.CheckStatus(walletDTO.JMBG, walletDTO.PIN);
             if (!isValid) new WalletServiceException("PIN nije validan!", "CreateWallet: Invalid PIN");
 
-            int pass = PassService.GeneratePASS();
+            string pass = PassService.GeneratePASS();
 
             Wallet newWallet = new Wallet(walletDTO.FirstName,
                 walletDTO.LastName,
@@ -60,6 +60,13 @@ namespace Core.ApplicationServices
             await UnitOfWork.SaveChangesAsync();
 
             return new WalletDTO(newWallet);
+        }
+
+        public async Task<WalletDTO> GetWallet(string walletId)
+        {
+            var wallet = await UnitOfWork.WalletRepository.GetById(walletId);
+
+            return new WalletDTO(wallet);
         }
     }
 }

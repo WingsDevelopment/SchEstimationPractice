@@ -76,6 +76,7 @@ namespace Core.ApplicationServices
 
                 var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
                 ValidateWallet(wallet, jmbg, pass);
+                if (wallet.IsBlocked) throw new WalletServiceException("Wallet je blokiran!", "Deposit: Wallet is blocked!");
 
                 await BankService.Withdraw(wallet.JMBG, wallet.PIN, amount);
 
@@ -110,6 +111,7 @@ namespace Core.ApplicationServices
 
                 var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
                 ValidateWallet(wallet, jmbg, pass);
+                if (wallet.IsBlocked) throw new WalletServiceException("Wallet je blokiran!", "Withdraw: Wallet is blocked!");
 
                 await BankService.Deposit(wallet.JMBG, wallet.PIN, amount);
 
@@ -150,8 +152,12 @@ namespace Core.ApplicationServices
                 //check wallets
                 var walletFrom = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
                 ValidateWallet(walletFrom, jmbg, pass);
+                if (walletFrom.IsBlocked) throw new WalletServiceException("Vas wallet je blokiran!", "Transfer: Wallet is blocked!");
+
                 var walletTo = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == relatedJmbg);
-                if (walletTo == null) throw new WalletServiceException("Wallet nije pronadjen!", "Transfer: Wallet not found!");
+                if (walletTo == null) throw new WalletServiceException("Destinacioni Wallet nije pronadjen!", "Transfer: Wallet not found!");
+                if (walletTo.IsBlocked) throw new WalletServiceException("Destinacioni wallet je blokiran!", "Transfer: Wallet is blocked!");
+
                 //create transactions
                 Transaction transferOut = new Transaction(walletFrom.Id, amount, TransactionType.TransferOut);
                 Transaction transferIn = new Transaction(walletTo.Id, amount, TransactionType.TransferIn);
@@ -179,6 +185,31 @@ namespace Core.ApplicationServices
             }
         }
 
+        public async Task<WalletDTO> BlockWallet(string jmbg)
+        {
+            var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
+            if (wallet == null) throw new WalletServiceException("Wallet nije pronadjen!", "Deposit: Wallet not found!");
+
+            wallet.Block();
+
+            await UnitOfWork.WalletRepository.Update(wallet);
+            await UnitOfWork.SaveChangesAsync();
+
+            return new WalletDTO(wallet);
+        }
+        public async Task<WalletDTO> UnBlockWallet(string jmbg)
+        {
+            var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
+            if (wallet == null) throw new WalletServiceException("Wallet nije pronadjen!", "Deposit: Wallet not found!");
+
+            wallet.UnBlock();
+
+            await UnitOfWork.WalletRepository.Update(wallet);
+            await UnitOfWork.SaveChangesAsync();
+
+            return new WalletDTO(wallet);
+        }
+
         public async Task<WalletDTO> GetWallet(string jmbg, string pass)
         {
             var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
@@ -196,9 +227,9 @@ namespace Core.ApplicationServices
         /// <exception cref="WalletServiceException">if wallet is not valid</exception>
         private void ValidateWallet(Wallet wallet, string jmbg, string pass)
         {
-            if (wallet == null) throw new WalletServiceException("Wallet nije pronadjen!", "Deposit: Wallet not found!");
-            if (wallet.JMBG != jmbg) throw new WalletServiceException("JMBG nije ipsravan!", "Deposit: Invalid JMBG!");
-            if (wallet.PASS != pass) throw new WalletServiceException("PASS nije ipsravan!", "Deposit: Invalid PASS!");
+            if (wallet == null) throw new WalletServiceException("Wallet nije pronadjen!", "ValidateWallet: Wallet not found!");
+            if (wallet.JMBG != jmbg) throw new WalletServiceException("JMBG nije ipsravan!", "ValidateWallet: Invalid JMBG!");
+            if (wallet.PASS != pass) throw new WalletServiceException("PASS nije ipsravan!", "ValidateWallet: Invalid PASS!");
         }
     }
 }

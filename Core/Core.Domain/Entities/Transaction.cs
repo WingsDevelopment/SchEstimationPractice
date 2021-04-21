@@ -12,6 +12,7 @@ namespace Core.Domain.Entities
         public decimal Amount { get; private set; }
         public DateTime TransactionDate { get; private set; }
         public TransactionType TransactionType { get; private set; }
+        public string RelatedWalletJmbg { get; private set; }
         public string ReferenceTransactionId { get; private set; }
         public Transaction()
         {
@@ -27,7 +28,7 @@ namespace Core.Domain.Entities
             TransactionType = transactionType;
         }
 
-        public void SetReferenceTransactionId(string referenceTransactionId)
+        private void SetReferenceTransactionId(string referenceTransactionId)
         {
             if (String.IsNullOrWhiteSpace(referenceTransactionId))
             {
@@ -37,7 +38,7 @@ namespace Core.Domain.Entities
 
             ReferenceTransactionId = referenceTransactionId;
         }
-        public void SetWalletId(string walletId)
+        private void SetWalletId(string walletId)
         {
             if (String.IsNullOrWhiteSpace(walletId))
             {
@@ -46,6 +47,22 @@ namespace Core.Domain.Entities
             }
 
             WalletId = walletId;
+        }
+        private void SetRelatedJmbg(string relatedWalletJmbg)
+        {
+            if (String.IsNullOrWhiteSpace(relatedWalletJmbg))
+            {
+                throw new TransactionEntityException("WalletId ne sme biti null!",
+                    "SetWalletId: WalletId can't be null.");
+            }
+
+            RelatedWalletJmbg = relatedWalletJmbg;
+        }
+
+        public void SetRelatedWalletReference(string referenceTransactionId, string relatedWalletJmbg)
+        {
+            SetReferenceTransactionId(referenceTransactionId);
+            SetRelatedJmbg(relatedWalletJmbg);
         }
     }
 }

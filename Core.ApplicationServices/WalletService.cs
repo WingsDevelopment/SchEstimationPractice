@@ -131,6 +131,54 @@ namespace Core.ApplicationServices
             }
         }
 
+        /// <summary>
+        /// Transfers money from one wallet to another
+        /// </summary>
+        /// <param name="jmbg"></param>
+        /// <param name="relatedJmbg"></param>
+        /// <param name="pass"></param>
+        /// <param name="amount"></param>
+        /// <returns>WalletDTO wallet from transfer occured</returns>
+        public async Task<WalletDTO> Transfer(string jmbg, 
+            string relatedJmbg, 
+            string pass, 
+            decimal amount)
+        {
+            try
+            {
+                await UnitOfWork.BeginTransactionAsync();
+                //check wallets
+                var walletFrom = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
+                ValidateWallet(walletFrom, jmbg, pass);
+                var walletTo = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == relatedJmbg);
+                if (walletTo == null) throw new WalletServiceException("Wallet nije pronadjen!", "Transfer: Wallet not found!");
+                //create transactions
+                Transaction transferOut = new Transaction(walletFrom.Id, amount, TransactionType.TransferOut);
+                Transaction transferIn = new Transaction(walletTo.Id, amount, TransactionType.TransferIn);
+                //set references
+                transferOut.SetRelatedWalletReference(transferIn.Id, walletTo.JMBG);
+                transferIn.SetRelatedWalletReference(transferOut.Id, walletFrom.JMBG);
+                //update wallets
+                walletFrom.Withdraw(amount);
+                walletTo.Deposit(amount);
+                //update db
+                await UnitOfWork.WalletRepository.Update(walletFrom);
+                await UnitOfWork.WalletRepository.Update(walletTo);
+                await UnitOfWork.TransactionRepository.Insert(transferOut);
+                await UnitOfWork.TransactionRepository.Insert(transferIn);
+                await UnitOfWork.SaveChangesAsync();
+                await UnitOfWork.CommitTransactionAsync();
+
+                return new WalletDTO(walletFrom);
+            }
+            catch (Exception e)
+            {
+                await UnitOfWork.RollbackTransactionAsync();
+
+                throw e;
+            }
+        }
+
         public async Task<WalletDTO> GetWallet(string jmbg, string pass)
         {
             var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
@@ -148,9 +196,9 @@ namespace Core.ApplicationServices
         /// <exception cref="WalletServiceException">if wallet is not valid</exception>
         private void ValidateWallet(Wallet wallet, string jmbg, string pass)
         {
-            if (wallet == null) new WalletServiceException("Wallet nije pronadjen!", "Deposit: Wallet not found!");
-            if (wallet.JMBG != jmbg) new WalletServiceException("JMBG nije ipsravan!", "Deposit: Invalid JMBG!");
-            if (wallet.PASS != pass) new WalletServiceException("PASS nije ipsravan!", "Deposit: Invalid PASS!");
+            if (wallet == null) throw new WalletServiceException("Wallet nije pronadjen!", "Deposit: Wallet not found!");
+            if (wallet.JMBG != jmbg) throw new WalletServiceException("JMBG nije ipsravan!", "Deposit: Invalid JMBG!");
+            if (wallet.PASS != pass) throw new WalletServiceException("PASS nije ipsravan!", "Deposit: Invalid PASS!");
         }
     }
 }

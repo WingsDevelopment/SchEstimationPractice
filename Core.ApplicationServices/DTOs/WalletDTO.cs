@@ -17,6 +17,7 @@ namespace Core.ApplicationServices.DTOs
         public string BankAccount { get; set; }
         public string PASS { get; set; }
         public bool IsBlocked { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         public WalletDTO()
         {
@@ -35,6 +36,7 @@ namespace Core.ApplicationServices.DTOs
             PIN = wallet.PIN;
             PASS = wallet.PASS;
             IsBlocked = wallet.IsBlocked;
+            CreatedDate = wallet.CreatedDate;
         }
     }
 }

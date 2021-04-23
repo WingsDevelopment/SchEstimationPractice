@@ -18,10 +18,11 @@ namespace Core.Domain.Entities
         public string BankAccount { get; private set; }
         public string PASS { get; private set; }
         public bool IsBlocked { get; private set; }
-
+        public DateTime CreatedDate { get; private set; }
         public Wallet()
         {
             Id = Guid.NewGuid().ToString();
+            CreatedDate = DateTime.Now;
         }
 
         public Wallet(string firstName,

@@ -1,4 +1,5 @@
 ﻿using Core.ApplicationServices.DTOs;
+using Core.Domain.Entities;
 using Core.Domain.Repositories;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,11 @@ namespace Core.ApplicationServices
             UnitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<TransactionDTO>> GetTransactionsByWalletId(string walletId)
+        public async Task<IEnumerable<TransactionDTO>> GetTransactionsByWalletIdAndDate(string walletId, DateTime? date = null)
         {
-            var transactions = await UnitOfWork.TransactionRepository.GetFilteredList(w => w.WalletId == walletId);
+            var transactions = await UnitOfWork.TransactionRepository
+                .GetFilteredList(w => w.WalletId == walletId &&
+                    (date == null | w.TransactionDate.Date == date.Value.Date));
 
             List<TransactionDTO> transactionDTOs = new List<TransactionDTO>();
             foreach(var transaction in transactions)

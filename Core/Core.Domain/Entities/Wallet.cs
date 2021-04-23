@@ -95,16 +95,18 @@ namespace Core.Domain.Entities
                 throw new WalletEntityException("JMBG je obavezan!", "SetJMBG: JMBG can't be null.");
             }
 
-            if (jmbg.Length < 7)
+            if (jmbg.Length != 13)
             {
                 throw new WalletEntityException("JMBG nije validan!", "SetJMBG: JMBG is invalid.");
             }
-            //todo: proveriti el ovako radi
-
             string dateStr = jmbg.Substring(0, 7);
+            string prefix = "1";
+            if (dateStr[4] != '9') prefix = "2";
+            dateStr = dateStr.Insert(4, prefix);
+
             DateTime birthDate;
             if (DateTime.TryParseExact(dateStr
-                                        , "ddMMyyy"
+                                        , "ddMMyyyy"
                                         , CultureInfo.InvariantCulture
                                         , DateTimeStyles.None
                                         , out birthDate))
@@ -113,6 +115,12 @@ namespace Core.Domain.Entities
             {
                 throw new WalletEntityException("Morate biti punoletni da biste se prijavili!", "SetJMBG: User is not adult.");
             }
+
+            int regionOfBithNumber = 0;
+            if (!int.TryParse(jmbg.Substring(7, 2), out regionOfBithNumber)) 
+                throw new WalletEntityException("JMBG nije validan!", "SetJMBG: JMBG is invalid");
+            if (regionOfBithNumber < 70 || regionOfBithNumber > 99)
+                throw new WalletEntityException("Morate biti Srbin!", "SetJMBG: User is not Serbian");
 
             JMBG = jmbg;
         }

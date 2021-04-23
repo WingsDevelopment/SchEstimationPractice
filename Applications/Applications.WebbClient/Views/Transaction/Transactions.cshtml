@@ -8,6 +8,12 @@
 <section class="page-section" id="createWallet">
     <h1>Transactions</h1>
 
+    <label>Date filter:</label>
+    <form asp-action="Transactions" method="get">
+        <input type="text" name="walletId" value="@TempData["WalletId"]" style="display:none"/>
+        <input type="date" name="date" />
+        <button type="submit">Filter</button>
+    </form>
     <table class="table">
         <thead>
             <tr>

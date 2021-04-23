@@ -24,12 +24,13 @@ namespace Applications.WebbClient.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> Transactions(string walletId)
+        public async Task<IActionResult> Transactions(string walletId, DateTime? date)
         {
             try
             {
-                var transactions = await TransactionService.GetTransactionsByWalletId(walletId);
+                var transactions = await TransactionService.GetTransactionsByWalletIdAndDate(walletId, date);
 
+                TempData["WalletId"] = walletId;
                 return View(transactions);
             }
             catch (Exception ex)

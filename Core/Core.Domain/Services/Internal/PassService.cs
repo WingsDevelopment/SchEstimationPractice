@@ -14,8 +14,8 @@ namespace Core.Domain.Services.Internal
 
         public PassService(string minPassConfig, string maxPassConfig)
         {
-            if (!int.TryParse(minPassConfig, out PASS_MIN)) throw new Exception("Invalid minPassConfig string");
-            if (!int.TryParse(maxPassConfig, out PASS_MAX)) throw new Exception("Invalid maxPassConfig string");
+            if (!int.TryParse(minPassConfig, out PASS_MIN)) throw new ArgumentException("Invalid minPassConfig string");
+            if (!int.TryParse(maxPassConfig, out PASS_MAX)) throw new ArgumentException("Invalid maxPassConfig string");
         }
 
         public string GeneratePASS()

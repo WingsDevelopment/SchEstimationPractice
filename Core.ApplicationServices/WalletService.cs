@@ -1,4 +1,5 @@
 ﻿using Core.ApplicationServices.DTOs;
+using Core.ApplicationServices.Factories;
 using Core.ApplicationServices.Exceptions;
 using Core.Domain.Entities;
 using Core.Domain.Repositories;
@@ -14,16 +15,34 @@ namespace Core.ApplicationServices
         private readonly IPassService PassService;
         private readonly ICoreUnitOfWork UnitOfWork;
         private readonly IBankService BankService;
+        private readonly int NumberOfFirstDaysWithoutComission;
+        private readonly decimal MaxWithdraw;
+        private readonly decimal MaxDeposit;
+        private readonly TransferFactory TransferFactory;
 
         public WalletService(
                    ICoreUnitOfWork unitOfWork,
                    IBankService rakicRaiffeisenBrosBankService,
-                   IPassService passService
+                   IPassService passService,
+                   string numberOfFirstDaysWithoutComission,
+                   TransferFactory transferFactory,
+                   string maxWithdraw,
+                   string maxDeposit
                )
         {
             UnitOfWork = unitOfWork;
             BankService = rakicRaiffeisenBrosBankService;
             PassService = passService;
+            TransferFactory = transferFactory;
+
+            if (!int.TryParse(numberOfFirstDaysWithoutComission, out NumberOfFirstDaysWithoutComission))
+                throw new ArgumentException("Invalid NumberOfFirstDaysWithoutComission string");
+
+            if (!decimal.TryParse(maxWithdraw, out MaxWithdraw))
+                throw new ArgumentException("Invalid MaxDeposit string");
+
+            if (!decimal.TryParse(maxDeposit, out MaxDeposit))
+                throw new ArgumentException("Invalid MaxDeposit string");
         }
 
         /// <summary>
@@ -74,6 +93,13 @@ namespace Core.ApplicationServices
                 ValidateWallet(wallet, jmbg, pass);
                 if (wallet.IsBlocked) throw new WalletServiceException("Wallet je blokiran!", "Deposit: Wallet is blocked!");
 
+                decimal thisMonthDepositSum = await UnitOfWork.TransactionRepository
+                    .GetTransactionSumByTransactionsTypeThisMonth(wallet.Id, TransactionType.Deposit);
+                if (thisMonthDepositSum + amount > MaxDeposit)
+                {
+                    throw new WalletServiceException("Vi ste terorista!", "Deposit: Max amount of deposit exceeded this month");
+                }
+
                 await BankService.Withdraw(wallet.JMBG, wallet.PIN, amount);
 
                 Transaction transaction = new Transaction(wallet.Id, amount, TransactionType.Deposit);
@@ -108,6 +134,13 @@ namespace Core.ApplicationServices
                 var wallet = await UnitOfWork.WalletRepository.GetFirstOrDefaultWithIncludes(w => w.JMBG == jmbg);
                 ValidateWallet(wallet, jmbg, pass);
                 if (wallet.IsBlocked) throw new WalletServiceException("Wallet je blokiran!", "Withdraw: Wallet is blocked!");
+
+                decimal thisMonthWithdrawSum = await UnitOfWork.TransactionRepository
+                    .GetTransactionSumByTransactionsTypeThisMonth(wallet.Id, TransactionType.Withdraw);
+                if (thisMonthWithdrawSum + amount > MaxWithdraw)
+                {
+                    throw new WalletServiceException("Vi ste terorista!", "Withdraw: Max amount of withdraw exceeded this month");
+                }
 
                 await BankService.Deposit(wallet.JMBG, wallet.PIN, amount);
 
@@ -154,20 +187,20 @@ namespace Core.ApplicationServices
                 if (walletTo == null) throw new WalletServiceException("Destinacioni Wallet nije pronadjen!", "Transfer: Wallet not found!");
                 if (walletTo.IsBlocked) throw new WalletServiceException("Destinacioni wallet je blokiran!", "Transfer: Wallet is blocked!");
 
-                //create transactions
-                Transaction transferOut = new Transaction(walletFrom.Id, amount, TransactionType.TransferOut);
-                Transaction transferIn = new Transaction(walletTo.Id, amount, TransactionType.TransferIn);
-                //set references
-                transferOut.SetTransferReference(transferIn.Id, walletTo.JMBG);
-                transferIn.SetTransferReference(transferOut.Id, walletFrom.JMBG);
-                //update wallets
-                walletFrom.Withdraw(amount);
-                walletTo.Deposit(amount);
-                //update db
+                TransferDTO transfer;
+                if (await IsWalletComissionFree(walletFrom))
+                {
+                    transfer = TransferFactory.CreateTransferAndUpdateWalletsWithoutComission(walletFrom, walletTo, amount);
+                }
+                else
+                {
+                    transfer = TransferFactory.CreateTransferAndUpdateWallets(walletFrom, walletTo, amount);
+                }
+
                 await UnitOfWork.WalletRepository.Update(walletFrom);
                 await UnitOfWork.WalletRepository.Update(walletTo);
-                await UnitOfWork.TransactionRepository.Insert(transferOut);
-                await UnitOfWork.TransactionRepository.Insert(transferIn);
+                await UnitOfWork.TransactionRepository.Insert(transfer.TransactionOut);
+                await UnitOfWork.TransactionRepository.Insert(transfer.TransactionIn);
                 await UnitOfWork.SaveChangesAsync();
                 await UnitOfWork.CommitTransactionAsync();
 
@@ -225,6 +258,19 @@ namespace Core.ApplicationServices
             ValidateWallet(wallet, jmbg, pass);
 
             return new WalletDTO(wallet);
+        }
+
+        /// <summary>
+        /// Checks if wallet is free of comission
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <returns></returns>
+        public async Task<bool> IsWalletComissionFree(Wallet wallet)
+        {
+            if ((DateTime.Now - wallet.CreatedDate).TotalDays < NumberOfFirstDaysWithoutComission) return true;
+            if (!(await UnitOfWork.TransactionRepository.HasAnyTransferThisMonth(wallet.Id))) return true;
+
+            return false;
         }
 
         /// <summary>

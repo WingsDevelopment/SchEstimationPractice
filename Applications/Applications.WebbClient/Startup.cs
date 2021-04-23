@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Core.Infrastructure.DataAccess.EfCoreDataAccess;
 using Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock;
+using Core.ApplicationServices.Factories;
 
 namespace Applications.WebbClient
 {
@@ -43,18 +44,35 @@ namespace Applications.WebbClient
 
             services.AddSingleton<IPassService, PassService>((serviceProvider) =>
             {
-                string pass_min = Configuration["passConfig:minPassConfig"];
-                string pass_max = Configuration["passConfig:maxPassConfig"];
+                string PassMin = Configuration["passConfig:minPassConfig"];
+                string PassMax = Configuration["passConfig:maxPassConfig"];
 
-                return new PassService(pass_min, pass_max);
+                return new PassService(PassMin, PassMax);
+            });
+
+            services.AddSingleton((IServiceProvider serviceProvider) =>
+            {
+                string PercentageCommissionStartingAmount = Configuration["comission:percentageCommissionStartingAmount"];
+                string FixedCommission = Configuration["comission:fixedCommission"];
+                string PercentageCommission = Configuration["comission:PercentageCommission"];
+
+                return new TransferFactory(PercentageCommissionStartingAmount, FixedCommission, PercentageCommission);
             });
 
             services.AddScoped((IServiceProvider serviceProvider) =>
             {
+                string NumberOfFirstDaysWithoutComission = Configuration["comission:numberOfFirstDaysWithoutComission"];
+                string maxWithdraw = Configuration["maxAmount:withdraw"];
+                string maxDeposit = Configuration["maxAmount:deposit"];
+
                 return new WalletService(
                     serviceProvider.GetRequiredService<ICoreUnitOfWork>(),
                     serviceProvider.GetRequiredService<IBankService>(),
-                    serviceProvider.GetRequiredService<IPassService>());
+                    serviceProvider.GetRequiredService<IPassService>(),
+                    NumberOfFirstDaysWithoutComission,
+                    serviceProvider.GetRequiredService<TransferFactory>(),
+                    maxWithdraw,
+                    maxDeposit);
             });
 
             services.AddScoped((IServiceProvider serviceProvider) =>

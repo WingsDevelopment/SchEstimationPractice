@@ -14,6 +14,18 @@ services:
             - "mssqldata:/var/lib/mssql"
         networks:
             - estimation_practice_network
+    
+    webclient:
+        build:
+            context: ./
+            dockerfile: ./Applications/Applications.WebClient/Dockerfile
+        image: sch/estimation_webclient:0.1
+        container_name: estimation_webclient
+        hostname: estimation_webclient
+        depends_on:
+            - mssql
+        networks:
+            - estimation_practice_network
 
 volumes:
     mssqldata:       

@@ -25,9 +25,16 @@ namespace Common.EfCoreDataAccess
         {
             return Transaction.CommitAsync();
         }
-        public Task RollbackTransactionAsync()
+        public async Task RollbackTransactionAsync()
         {
-            return Transaction.RollbackAsync();
+            await Transaction.RollbackAsync();
+            Transaction?.Dispose();
+            Transaction = null;
+            //return Transaction.RollbackAsync();
+        }
+        public void ClearTracking()
+        {
+            Context.ChangeTracker.Clear();
         }
 
         public async Task SaveChangesAsync()

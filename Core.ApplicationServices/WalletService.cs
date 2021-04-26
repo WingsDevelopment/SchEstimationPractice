@@ -22,7 +22,7 @@ namespace Core.ApplicationServices
 
         public WalletService(
                    ICoreUnitOfWork unitOfWork,
-                   IBankService rakicRaiffeisenBrosBankService,
+                   IBankService bankService,
                    IPassService passService,
                    string numberOfFirstDaysWithoutComission,
                    TransferFactory transferFactory,
@@ -31,7 +31,7 @@ namespace Core.ApplicationServices
                )
         {
             UnitOfWork = unitOfWork;
-            BankService = rakicRaiffeisenBrosBankService;
+            BankService = bankService;
             PassService = passService;
             TransferFactory = transferFactory;
 
@@ -100,10 +100,10 @@ namespace Core.ApplicationServices
                     throw new WalletServiceException("Vi ste terorista!", "Deposit: Max amount of deposit exceeded this month");
                 }
 
-                await BankService.Withdraw(wallet.JMBG, wallet.PIN, amount);
-
                 Transaction transaction = new Transaction(wallet.Id, amount, TransactionType.Deposit);
                 wallet.Deposit(transaction.Amount);
+
+                await BankService.Withdraw(wallet.JMBG, wallet.PIN, amount);
 
                 await UnitOfWork.WalletRepository.Update(wallet);
                 await UnitOfWork.TransactionRepository.Insert(transaction);
@@ -142,10 +142,11 @@ namespace Core.ApplicationServices
                     throw new WalletServiceException("Vi ste terorista!", "Withdraw: Max amount of withdraw exceeded this month");
                 }
 
-                await BankService.Deposit(wallet.JMBG, wallet.PIN, amount);
-
                 Transaction transaction = new Transaction(wallet.Id, amount, TransactionType.Withdraw);
                 wallet.Withdraw(transaction.Amount);
+
+                await BankService.Deposit(wallet.JMBG, wallet.PIN, amount);
+
 
                 await UnitOfWork.WalletRepository.Update(wallet);
                 await UnitOfWork.TransactionRepository.Insert(transaction);

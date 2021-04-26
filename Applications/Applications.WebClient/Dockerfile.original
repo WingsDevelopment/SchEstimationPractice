@@ -1,0 +1,28 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
+WORKDIR /src
+COPY ["Applications/Applications.WebClient/Applications.WebClient.csproj", "Applications/Applications.WebClient/"]
+COPY ["Core.Infrastructure.DataAccess.EfCoreDataAccess/Core.Infrastructure.DataAccess.EfCoreDataAccess.csproj", "Core.Infrastructure.DataAccess.EfCoreDataAccess/"]
+COPY ["Core/Core.Domain/Core.Domain.csproj", "Core/Core.Domain/"]
+COPY ["Common/Common.Utils/Common.Utils.csproj", "Common/Common.Utils/"]
+COPY ["Core.ApplicationServices/Core.ApplicationServices.csproj", "Core.ApplicationServices/"]
+COPY ["Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock/Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock.csproj", "Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock/"]
+COPY ["Common/Common.EfCoreDataAccess/Common.EfCoreDataAccess.csproj", "Common/Common.EfCoreDataAccess/Common.EfCoreDataAccess.csproj"]
+
+
+RUN dotnet restore "Applications/Applications.WebClient/Applications.WebClient.csproj"
+COPY . .
+WORKDIR "/src/Applications/Applications.WebClient/"
+RUN dotnet build "Applications.WebClient.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "Applications.WebClient.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "Applications.WebClient.dll"]

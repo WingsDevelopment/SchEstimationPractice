@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.ApplicationServices\Core.ApplicationServices.csproj" />
-    <ProjectReference Include="..\..\Core.Infrastructure.DataAccess.EfCoreDataAccess\Core.Infrastructure.DataAccess.EfCoreDataAccess.csproj" />
-    <ProjectReference Include="..\..\Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock\Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock.csproj" />
+    <ProjectReference Include="..\..\Core\Core.ApplicationServices\Core.ApplicationServices.csproj" />
+    <ProjectReference Include="..\..\Core\Infrastructure\DataAccess\Core.Infrastructure.DataAccess.EfCoreDataAccess\Core.Infrastructure.DataAccess.EfCoreDataAccess.csproj" />
+    <ProjectReference Include="..\..\Core\Services\External\RakicRaiffeisenBrosBankService\Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock\Core.Infrastructure.Services.RakicRaiffeisenBrosBankService.Mock.csproj" />
   </ItemGroup>
 
 </Project>

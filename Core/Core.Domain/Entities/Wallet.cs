@@ -94,11 +94,16 @@ namespace Core.Domain.Entities
             {
                 throw new WalletEntityException("JMBG je obavezan!", "SetJMBG: JMBG can't be null.");
             }
-
             if (jmbg.Length != 13)
             {
                 throw new WalletEntityException("JMBG nije validan!", "SetJMBG: JMBG is invalid.");
             }
+            long intTest;
+            if (!long.TryParse(jmbg, out intTest))
+            {
+                throw new WalletEntityException("JMBG nije validan!", "SetJMBG: JMBG is invalid.");
+            }
+
             string dateStr = jmbg.Substring(0, 7);
             string prefix = "1";
             if (dateStr[4] != '9') prefix = "2";
@@ -139,6 +144,11 @@ namespace Core.Domain.Entities
             {
                 throw new WalletEntityException("Pin je neispravnog formata!", "SetPin: Invalid pin format.");
             }
+            int intTest;
+            if (!int.TryParse(pin, out intTest))
+            {
+                throw new WalletEntityException("Pin je neispravnog formata!", "SetPin: Invalid pin format.");
+            }
 
             PIN = pin;
         }
@@ -154,6 +164,11 @@ namespace Core.Domain.Entities
         public void SetPASS(string pass)
         {
             if (pass.Length != 6)
+            {
+                throw new WalletEntityException("PASS je neispravnog formata!", "SetPASS: Invalid PASS format.");
+            }
+            int intTest;
+            if (!int.TryParse(pass, out intTest))
             {
                 throw new WalletEntityException("PASS je neispravnog formata!", "SetPASS: Invalid PASS format.");
             }
